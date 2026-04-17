@@ -1,3 +1,3 @@
-import { UsersPage } from "@/src/views/UsersPage";
+import { UsersPage } from "@/features/users";
 
 export default UsersPage;

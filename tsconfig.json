@@ -20,9 +20,9 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/components/theme-provider": ["./components/theme-provider.tsx"],
       "@/components/ui/*": ["./components/ui/*"],
       "@/components/*": ["./src/components/*"],
+      "@/features/*": ["./src/features/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/services/*": ["./src/services/*"],
       "@/store/*": ["./src/store/*"],

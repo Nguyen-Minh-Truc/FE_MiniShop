@@ -1,3 +1,3 @@
-import { AnalyticsPage } from "@/src/views/AnalyticsPage";
+import { AnalyticsPage } from "@/features/analytics";
 
 export default AnalyticsPage;
