@@ -2,10 +2,15 @@
 
 export const routes = {
   home: "/",
+  login: "/login",
   dashboard: "/dashboard",
   analytics: "/analytics",
   categories: "/categories",
+  importReceipts: "/import-receipts",
+  inventories: "/inventories",
+  orders: "/orders",
   products: "/products",
+  promotions: "/promotions",
   roles: "/roles",
   suppliers: "/suppliers",
   users: "/users",
@@ -30,9 +35,29 @@ export const navigationItems = [
     icon: "Tags",
   },
   {
+    title: "Import Receipts",
+    href: routes.importReceipts,
+    icon: "FileDown",
+  },
+  {
+    title: "Inventories",
+    href: routes.inventories,
+    icon: "Boxes",
+  },
+  {
     title: "Products",
     href: routes.products,
     icon: "Package",
+  },
+  {
+    title: "Promotions",
+    href: routes.promotions,
+    icon: "TicketPercent",
+  },
+  {
+    title: "Orders",
+    href: routes.orders,
+    icon: "ShoppingCart",
   },
   {
     title: "Roles",

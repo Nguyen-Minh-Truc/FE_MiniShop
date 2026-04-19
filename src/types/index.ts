@@ -271,6 +271,11 @@ export interface CreateImportReceiptRequest {
     quantity: number;
     costPrice: number;
   }[];
+  import_riept_item?: {
+    productId: number;
+    quantity: number;
+    costPrice: number;
+  }[];
 }
 
 // Cart
