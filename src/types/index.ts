@@ -56,14 +56,13 @@ export interface Permission {
 
 export interface User {
   id: number;
-  username: string;
+  name: string;
   email: string;
   phone: string | null;
   address: string | null;
   active: boolean;
   createdAt: string | null;
   role: Role | null;
-  // NOTE: password & refreshToken không nên trả về từ API
 }
 
 export interface Category {

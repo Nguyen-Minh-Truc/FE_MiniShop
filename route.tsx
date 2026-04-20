@@ -1,9 +1,7 @@
-"use client";
-
 export const routes = {
   home: "/",
   login: "/login",
-  dashboard: "/admin/dashboard",
+  dashboard: "/dashboard",
   analytics: "/admin/analytics",
   categories: "/admin/categories",
   importReceipts: "/admin/import-receipts",

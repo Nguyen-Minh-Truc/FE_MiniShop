@@ -1,3 +1,3 @@
-import { LoginPage } from "@/features/auth";
+import { LoginPage } from "@/src/features/admin/auth";
 
 export default LoginPage;

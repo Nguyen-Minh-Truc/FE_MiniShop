@@ -1,14 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { categoriesReducer } from "@/features/categories/store";
-import { inventoriesReducer } from "@/features/inventories/store";
-import { importReceiptsReducer } from "@/features/import-receipts/store";
-import { ordersReducer } from "@/features/orders/store";
-import { productsReducer } from "@/features/products/store";
-import { promotionsReducer } from "@/features/promotions/store";
-import { rolesReducer } from "@/features/roles/store";
-import { suppliersReducer } from "@/features/suppliers/store";
-import { usersReducer } from "@/features/users/store";
+import { categoriesReducer } from "@/src/features/admin/categories/store";
+import { inventoriesReducer } from "@/src/features/admin/inventories/store";
+import { importReceiptsReducer } from "@/src/features/admin/import-receipts/store";
+import { ordersReducer } from "@/src/features/admin/orders/store";
+import { productsReducer } from "@/src/features/admin/products/store";
+import { promotionsReducer } from "@/src/features/admin/promotions/store";
+import { rolesReducer } from "@/src/features/admin/roles/store";
+import { suppliersReducer } from "@/src/features/admin/suppliers/store";
+import { usersReducer } from "@/src/features/admin/users/store";
 
 export const store = configureStore({
   reducer: {

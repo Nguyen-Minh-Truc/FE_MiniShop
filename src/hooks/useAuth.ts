@@ -1,34 +1,49 @@
 "use client";
-
-import { useCallback } from "react";
+import axiosInstance from "@/lib/axiosInstance";
+import { useCallback, useEffect, useState } from "react";
 import { User } from "@/types";
+import { clearAccessToken, getAccessToken } from "@/lib/authToken";
 
-const defaultUser: User = {
-  id: "local-user",
-  name: "Guest User",
-  email: "guest@example.com",
-  role: "user",
-  joinDate: new Date(0),
+export const getAccount = async (): Promise<User> => {
+  const response = await axiosInstance.get("/auth/account");
+  return response.data.data;
 };
 
 export const useAuth = () => {
-  const getUser = useCallback((): User => {
-    return defaultUser;
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = getAccessToken();
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await getAccount();
+        setUser(data);
+      } catch {
+        clearAccessToken();
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
-  const logout = useCallback(() => {
-    // Mock logout logic
-    console.log("User logged out");
+  const logout = useCallback(async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+    } finally {
+      clearAccessToken();
+      setUser(null);
+    }
   }, []);
 
-  const updateProfile = useCallback((data: Partial<User>) => {
-    // Mock update logic
-    console.log("Profile updated:", data);
-  }, []);
-
-  return {
-    user: getUser(),
-    logout,
-    updateProfile,
-  };
+  return { user, loading, logout };
 };
