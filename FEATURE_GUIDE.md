@@ -193,6 +193,15 @@ const buildUrl = (path: string) => `${API_BASE_URL}${path}`;
 - Nên unwrap response theo `ApiResponse<T>` từ `src/types/index.ts`.
 - Endpoint danh sách trả về `PaginatedData<T>` thì lấy `response.data.result`.
 
+### 11.4.1. Pattern danh sách có phân trang + tìm kiếm
+
+- Backend nên trả về `ApiResponse<PaginatedData<T>>` với `meta.pageCurrent`, `meta.pageSize`, `meta.pages`, `meta.total`.
+- API client nên nhận query params kiểu `page`, `pageSize`, `search`, và các filter nghiệp vụ như `active`, `status`, `categoryId`.
+- Nếu feature dùng server-side pagination, page component chỉ giữ `page`, `pageSize`, `search`, filter state và dispatch refetch khi chúng thay đổi.
+- Với UI style hiện tại, đặt bộ lọc trong `Card`, bảng trong `Card`, và pagination control ở footer bên dưới bảng.
+- Nếu cần tìm kiếm nhiều thuộc tính, ưu tiên chuẩn hóa ở frontend bằng một input search chung, rồi để backend xử lý match theo contract đã thống nhất.
+- Khi CRUD xong, refetch danh sách theo query hiện tại để giữ lại trang, search, và filter.
+
 ### 11.5. Pattern Redux Toolkit
 
 ```ts
@@ -248,6 +257,7 @@ export interface UserFormValues {
 - [ ] Page đọc dữ liệu bằng selector, không giữ mock state lâu dài.
 - [ ] Form đóng sau khi dispatch thành công.
 - [ ] Table, detail, delete dialog chỉ render dữ liệu từ store.
+- [ ] Nếu feature có list lớn, đã có phân trang + tìm kiếm + filter theo đúng contract backend.
 - [ ] `get_errors` sạch trên các file mới.
 
 ## 12. Reference Flow: Products UI -> Redux -> API

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/Button";
 import {
@@ -43,6 +44,7 @@ export const CategoryFormDialog = ({
     defaultCategoryFormValues,
   );
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -59,20 +61,38 @@ export const CategoryFormDialog = ({
       return;
     }
 
+    const loadingToastId = toast.loading(
+      mode === "create" ? "Creating category..." : "Saving category...",
+    );
+
     try {
+      setIsSubmitting(true);
       await onSubmit({
         ...formValues,
         name: formValues.name.trim(),
         description: formValues.description.trim(),
       });
 
+      toast.success(
+        mode === "create"
+          ? "Category created successfully."
+          : "Category updated successfully.",
+      );
       onOpenChange(false);
     } catch (submitError) {
+      toast.error(
+        submitError instanceof Error
+          ? submitError.message
+          : "Failed to save category.",
+      );
       setError(
         submitError instanceof Error
           ? submitError.message
           : "Failed to save category.",
       );
+    } finally {
+      setIsSubmitting(false);
+      toast.dismiss(loadingToastId);
     }
   };
 
@@ -118,27 +138,6 @@ export const CategoryFormDialog = ({
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Active</Label>
-            <Select
-              value={String(formValues.active)}
-              onValueChange={(value) =>
-                setFormValues((prev) => ({
-                  ...prev,
-                  active: value === "true",
-                }))
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Active</SelectItem>
-                <SelectItem value="false">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <DialogFooter>
@@ -146,10 +145,11 @@ export const CategoryFormDialog = ({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" isLoading={isSubmitting}>
               {mode === "create" ? "Create Category" : "Save Changes"}
             </Button>
           </DialogFooter>

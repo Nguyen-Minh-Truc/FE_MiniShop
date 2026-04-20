@@ -324,7 +324,7 @@ export interface ApiResponse<T> {
 
 /** Pagination metadata */
 export interface PaginationMeta {
-  page: number;
+  pageCurrent: number;
   pageSize: number;
   pages: number;
   total: number;
@@ -420,5 +420,10 @@ export interface UserQueryParams extends PaginationParams {
   username?: string;
   email?: string;
   roleId?: number;
+  active?: boolean;
+}
+
+export interface CategoryQueryParams extends PaginationParams {
+  search?: string;
   active?: boolean;
 }

@@ -4,6 +4,8 @@ import type {
   CreateCategoryRequest,
   UpdateCategoryRequest,
   Category,
+  CategoryQueryParams,
+  PaginationMeta,
 } from "@/types";
 
 import { categoriesApi } from "./api";
@@ -12,20 +14,27 @@ export type CategoriesStatus = "idle" | "loading" | "succeeded" | "failed";
 
 export interface CategoriesState {
   items: Category[];
+  meta: PaginationMeta;
   status: CategoriesStatus;
   error: string | null;
 }
 
 const initialState: CategoriesState = {
   items: [],
+  meta: {
+    pageCurrent: 1,
+    pageSize: 10,
+    pages: 1,
+    total: 0,
+  },
   status: "idle",
   error: null,
 };
 
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
-  async () => {
-    return await categoriesApi.getCategories();
+  async (params?: CategoryQueryParams) => {
+    return await categoriesApi.getCategories(params);
   },
 );
 
@@ -63,7 +72,8 @@ const categoriesSlice = createSlice({
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.items = action.payload;
+        state.items = action.payload.result;
+        state.meta = action.payload.meta;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.status = "failed";
@@ -89,6 +99,8 @@ export const categoriesReducer = categoriesSlice.reducer;
 
 export const selectCategories = (state: { categories: CategoriesState }) =>
   state.categories.items;
+export const selectCategoriesMeta = (state: { categories: CategoriesState }) =>
+  state.categories.meta;
 export const selectCategoriesStatus = (state: {
   categories: CategoriesState;
 }) => state.categories.status;

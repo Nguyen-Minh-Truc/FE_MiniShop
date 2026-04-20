@@ -6,7 +6,6 @@ const resolveAccessToken = (payload: unknown): string | null => {
   if (!payload || typeof payload !== "object") {
     return null;
   }
-
   const source = payload as Record<string, unknown>;
   const nested =
     source.data && typeof source.data === "object"
@@ -26,7 +25,6 @@ const resolveAccessToken = (payload: unknown): string | null => {
       return candidate;
     }
   }
-
   return null;
 };
 
@@ -37,6 +35,7 @@ export const login = async (username: string, password: string) => {
   });
 
   const accessToken = resolveAccessToken(response?.data);
+
   if (!accessToken) {
     throw new Error("Login success but access token is missing from response.");
   }

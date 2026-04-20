@@ -13,6 +13,7 @@ interface CategoriesTableProps {
   onView: (category: CategoryItem) => void;
   onEdit: (category: CategoryItem) => void;
   onDelete: (category: CategoryItem) => void;
+  emptyMessage: string;
 }
 
 const getActiveVariant = (active: boolean) => (active ? "default" : "outline");

@@ -3,87 +3,80 @@ import type {
   Category,
   CategoryListResponse,
   CreateCategoryRequest,
+  CategoryQueryParams,
+  PaginatedData,
   UpdateCategoryRequest,
 } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
-
-const buildUrl = (path: string) => `${API_BASE_URL}${path}`;
-
-const requestJson = async <T>(
-  path: string,
-  options?: RequestInit,
-): Promise<T> => {
-  try {
-    const response = await fetch(buildUrl(path), {
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...options?.headers,
-      },
-      ...options,
-    });
-
-    const contentType = response.headers.get("content-type") || "";
-    const raw = await response.text();
-
-    // ❌ server trả lỗi HTTP (404/500)
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${raw}`);
-    }
-
-    // ❌ server không trả JSON (HTML login / error page)
-    if (!contentType.includes("application/json")) {
-      throw new Error("Server not running or returned HTML instead of JSON");
-    }
-
-    return JSON.parse(raw) as T;
-  } catch (err: any) {
-    // 💥 bắt lỗi mạng: server chết / không connect được
-    if (err instanceof TypeError) {
-      throw new Error("❌ Cannot connect to server (server may be down)");
-    }
-
-    throw err;
-  }
-};
+import axiosInstance from "@/lib/axiosInstance";
+import type { CategoryDetailItem } from "./types";
 
 const unwrapApiData = <T>(response: ApiResponse<T>) => response.data;
 
+const buildQueryString = (params?: CategoryQueryParams) => {
+  const searchParams = new URLSearchParams();
+
+  if (typeof params?.page === "number") {
+    searchParams.set("page", String(params.page));
+  }
+
+  if (typeof params?.pageSize === "number") {
+    searchParams.set("pageSize", String(params.pageSize));
+  }
+
+  if (typeof params?.search === "string" && params.search.trim().length > 0) {
+    searchParams.set("search", params.search.trim());
+  }
+
+  if (typeof params?.active === "boolean") {
+    searchParams.set("active", String(params.active));
+  }
+
+  const queryString = searchParams.toString();
+  return queryString ? `?${queryString}` : "";
+};
+
 export const categoriesApi = {
-  async getCategories(): Promise<Category[]> {
-    const response = await requestJson<CategoryListResponse>("/categories");
-    return unwrapApiData(response).result;
+  async getCategoryById(id: number): Promise<CategoryDetailItem> {
+    const response = await axiosInstance.get<ApiResponse<CategoryDetailItem>>(
+      `/categories/${id}`,
+    );
+
+    return unwrapApiData(response.data);
+  },
+
+  async getCategories(
+    params?: CategoryQueryParams,
+  ): Promise<PaginatedData<Category>> {
+    const response = await axiosInstance.get<CategoryListResponse>(
+      `/categories${buildQueryString(params)}`,
+    );
+
+    return unwrapApiData(response.data);
   },
 
   async createCategory(payload: CreateCategoryRequest): Promise<Category> {
-    const response = await requestJson<ApiResponse<Category>>("/categories", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    const response = await axiosInstance.post<ApiResponse<Category>>(
+      "/categories",
+      payload,
+    );
 
-    return unwrapApiData(response);
+    return unwrapApiData(response.data);
   },
 
   async updateCategory(
     id: number,
     payload: UpdateCategoryRequest,
   ): Promise<Category> {
-    const response = await requestJson<ApiResponse<Category>>(
+    const response = await axiosInstance.put<ApiResponse<Category>>(
       `/categories/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(payload),
-      },
+      payload,
     );
 
-    return unwrapApiData(response);
+    return unwrapApiData(response.data);
   },
 
   async deleteCategory(id: number): Promise<void> {
-    await requestJson<ApiResponse<null>>(`/categories/${id}`, {
-      method: "DELETE",
-    });
+    await axiosInstance.delete<ApiResponse<null>>(`/categories/${id}`);
   },
 };
